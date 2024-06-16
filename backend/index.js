@@ -73,6 +73,10 @@ const storage = multer.diskStorage({
 
 // routes
 
+app.get ("/", (req, res) => {
+    res.send("Hello World")
+})
+
 app.post("/signup", (req, res) => {
 
     conn.query("SELECT * FROM users WHERE email = ? OR username = ?", [req.body.email , req.body.username], (err, result) => {
