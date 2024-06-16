@@ -67,10 +67,6 @@ const storage = multer.diskStorage({
     }
 })
 
-// Generar una contraseña encriptada
-
-
-
 // routes
 
 app.get ("/", (req, res) => {
