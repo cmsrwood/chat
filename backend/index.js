@@ -38,8 +38,8 @@ app.use(session({
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-        secure: false, 
-        httpOnly: false,
+        secure: true, 
+        httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24 * 7
     }
 }))
@@ -166,7 +166,7 @@ const server = http.createServer(app)
 
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5173",
+        origin: FRONTEND_URL,
         methods: ["GET", "POST"]
     }
 })
