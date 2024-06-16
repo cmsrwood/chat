@@ -4,8 +4,9 @@ import io from 'socket.io-client'
 import Chat from './Chat'
 import axios from 'axios'
 import Swal from 'sweetalert2'
+import { FRONTEND_URL , BACKEND_URL } from '../config'
 
-const socket = io.connect("http://localhost:8800")
+const socket = io.connect(BACKEND_URL)
 
 
 function Sala() {
@@ -26,7 +27,7 @@ function Sala() {
   axios.defaults.withCredentials = true
 
   useEffect(() => {
-    axios.get("http://localhost:8800/session")
+    axios.get(`${BACKEND_URL}/session`)
       .then(res =>{
         if (res.data.loggedIn) {
           setUsername(res.data.username)
@@ -41,7 +42,7 @@ function Sala() {
   const logout = async (e) =>{
     e.preventDefault()
     try{
-          axios.get("http://localhost:8800/logout")
+          axios.get(`${BACKEND_URL}/logout`)
           .then(res => {
             if (res.data === "Success"){
               Swal.fire("You logged out successfully!", "Welcome!", "success")

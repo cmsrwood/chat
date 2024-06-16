@@ -183,7 +183,7 @@ io.on('connection', (socket) => {
 })
 
 server.listen (BACKEND_PORT, () => {
-    console.log(`Server running on http://localhost:${BACKEND_PORT}`)
+    console.log(`Server running on port ${BACKEND_PORT}`)
 })
 
 

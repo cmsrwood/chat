@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import Validation from './SignupValidation'
+import { FRONTEND_URL , BACKEND_URL } from '../config'
+
 
 export default function Signup(){
 
@@ -26,7 +28,7 @@ export default function Signup(){
             const err = Validation(user)
             setErrors(err)
             if (err.email === "" && err.password === ""){
-              axios.post("http://localhost:8800/signup",user)
+              axios.post(`${BACKEND_URL}/signup`,user)
               .then(res => {
                 if (res.data==="User created successfully"){
                 Swal.fire("User created successfully!", "Welcome!", "success");

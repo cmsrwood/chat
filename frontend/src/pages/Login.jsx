@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { FRONTEND_URL , BACKEND_URL } from '../config'
+
 
 export default function Signin() {
 
@@ -13,7 +15,7 @@ export default function Signin() {
   axios.defaults.withCredentials = true
 
   useEffect(() => {
-    axios.get("http://localhost:8800/session")
+    axios.get(`${BACKEND_URL}/session`)
       .then(res =>{
         if (res.data.loggedIn) {
           navigate("/sala")
@@ -38,7 +40,7 @@ export default function Signin() {
       const handleSubmit = async (e) =>{
         e.preventDefault()
         try{
-              axios.post("http://localhost:8800/login",user)
+              axios.post(`${BACKEND_URL}/login`,user)
               .then(res => {
                 console.log(res)
                 if (res.data==="Success"){
