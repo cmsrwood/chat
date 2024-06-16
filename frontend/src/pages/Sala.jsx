@@ -33,7 +33,7 @@ function Sala() {
           setUsername(res.data.username)
           console.log(res)
         } else {
-          navigate("/login")
+          console.log(res)
         }
       })
       .catch(err => console.log(err))
