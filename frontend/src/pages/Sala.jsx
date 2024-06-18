@@ -4,7 +4,8 @@ import io from 'socket.io-client'
 import Chat from './Chat'
 import axios from 'axios'
 import Swal from 'sweetalert2'
-import {FRONTEND_URL,BACKEND_URL} from '../config.js'
+const { BACKEND_PORT, FRONTEND_URL } = require("./config.js");
+
 
 const socket = io.connect(BACKEND_URL)
 
