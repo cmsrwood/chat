@@ -38,8 +38,8 @@ app.use(session({
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-        secure: true, 
-        httpOnly: true,
+        secure: false, 
+        httpOnly: false,
         maxAge: 1000 * 60 * 60 * 24 * 7
     }
 }))
@@ -67,11 +67,11 @@ const storage = multer.diskStorage({
     }
 })
 
-// routes
+// Generar una contraseña encriptada
 
-app.get ("/", (req, res) => {
-    res.send("Hello World")
-})
+
+
+// routes
 
 app.post("/signup", (req, res) => {
 
@@ -179,7 +179,7 @@ io.on('connection', (socket) => {
 })
 
 server.listen (BACKEND_PORT, () => {
-    console.log(`Server running on port ${BACKEND_PORT}`)
+    console.log(`Server running on http://localhost:${BACKEND_PORT}`)
 })
 
 

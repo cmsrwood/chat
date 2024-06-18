@@ -3,12 +3,28 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { FRONTEND_URL , BACKEND_URL } from '../config'
+import {FRONTEND_URL,BACKEND_URL} from '../config.js'
 
 
 export default function Signin() {
 
+  if (localStorage.getItem("user")) {
+    window.location.href = "/sala"
+  }
+
   axios.defaults.withCredentials = true
+
+  useEffect(() => {
+    axios.get(`${BACKEND_URL}/session`)
+      .then(res =>{
+        if (res.data.loggedIn) {
+          navigate("/sala")
+        } else {
+          console.log("Not logged in")
+        }
+      })
+      .catch(err => console.log(err))
+  }, [])
 
      //hooks
      const [user,setUser] = useState({
