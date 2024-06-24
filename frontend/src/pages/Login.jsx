@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-const { BACKEND_URL, FRONTEND_URL } = require("../config.js");
+import { BACKEND_URL, FRONTEND_URL } from "../config.js";
 
 
 export default function Signin() {

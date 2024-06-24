@@ -4,7 +4,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import Validation from './SignupValidation'
-const { BACKEND_URL, FRONTEND_URL } = require("../config.js");
+import { BACKEND_URL, FRONTEND_URL } from "../config.js";
+
 
 
 export default function Signup(){
