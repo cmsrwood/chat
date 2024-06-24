@@ -8,10 +8,6 @@ import { BACKEND_URL, FRONTEND_URL } from "../config.js";
 
 export default function Signin() {
 
-  if (localStorage.getItem("user")) {
-    window.location.href = "/sala"
-  }
-
   axios.defaults.withCredentials = true
 
   useEffect(() => {

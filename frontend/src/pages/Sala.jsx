@@ -12,6 +12,8 @@ const socket = io.connect(BACKEND_URL)
 
 
 function Sala() {
+  
+  axios.defaults.withCredentials = true
   const navigate = useNavigate()
   const [username, setUsername] = useState("")
   const [room, setRoom] = useState("")
@@ -26,7 +28,6 @@ function Sala() {
 
  
 
-  axios.defaults.withCredentials = true
 
   useEffect(() => {
     axios.get(`${BACKEND_URL}/session`)
