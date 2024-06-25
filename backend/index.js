@@ -15,7 +15,7 @@ const cookieParser = require('cookie-parser')
 const app = express()
 
 // config
-const { BACKEND_PORT, DB_HOST, DB_USER, DB_PASS, DB_DATABASE, FRONTEND_URL } = require("./config.js");
+const { BACKEND_PORT, DB_HOST, DB_USER, DB_PASS, DB_DATABASE, FRONTEND_URL, BACKEND_URL } = require("./config.js");
 
 // database
 const options = {
@@ -179,7 +179,7 @@ io.on('connection', (socket) => {
 })
 
 server.listen (BACKEND_PORT, () => {
-    console.log(`Server running on http://localhost:${BACKEND_PORT}`)
+    console.log(`Server running on ${BACKEND_URL}:${BACKEND_PORT}`)
 })
 
 
