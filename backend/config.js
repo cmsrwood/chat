@@ -5,7 +5,7 @@ const DB_HOST = process.env.DB_HOST || "localhost"
 const DB_USER = process.env.DB_USER || "root"
 const DB_PASS = process.env.DB_PASS || ""
 const DB_DATABASE = process.env.DB_DATABASE || "chat"
-const BACKEND_PORT = 8800
+const BACKEND_PORT = process.env.DB_DATABASE ||8800
 
 module.exports = {
   FRONTEND_URL,
