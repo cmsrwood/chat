@@ -123,6 +123,7 @@ app.post("/login", (req, res) => {
         }
         const user = result[0];
 
+        req.session.username = user.username;
         console.log (req.session.username)
         
         bcrypt.compare(password, user.pass, (err, isMatch) => {
@@ -135,7 +136,7 @@ app.post("/login", (req, res) => {
                 return;
             }
             res.send("Success");
-            req.session.username = user.username;
+            
         });
 
     });
