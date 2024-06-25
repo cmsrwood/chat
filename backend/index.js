@@ -38,8 +38,8 @@ app.use(session({
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-        secure: true, 
-        httpOnly: true,
+        secure: false, 
+        httpOnly: false,
         maxAge: 1000 * 60 * 60 * 24 * 7
     }
 }))
@@ -123,7 +123,6 @@ app.post("/login", (req, res) => {
         }
         const user = result[0];
 
-        req.session.username = user.username;
         console.log (req.session.username)
         
         bcrypt.compare(password, user.pass, (err, isMatch) => {
@@ -136,7 +135,7 @@ app.post("/login", (req, res) => {
                 return;
             }
             res.send("Success");
-            
+            req.session.username = user.username;
         });
 
     });
