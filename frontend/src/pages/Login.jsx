@@ -10,18 +10,6 @@ export default function Signin() {
 
   axios.defaults.withCredentials = true
 
-  useEffect(() => {
-    axios.get(`${BACKEND_URL}/session`)
-      .then(res =>{
-        if (res.data.loggedIn) {
-          navigate("/sala")
-        } else {
-          console.log("Not logged in")
-        }
-      })
-      .catch(err => console.log(err))
-  }, [])
-
      //hooks
      const [user,setUser] = useState({
         username:"",

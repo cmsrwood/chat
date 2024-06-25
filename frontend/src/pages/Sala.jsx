@@ -26,22 +26,6 @@ function Sala() {
     }
   }
 
- 
-
-
-  useEffect(() => {
-    axios.get(`${BACKEND_URL}/session`)
-      .then(res =>{
-        if (res.data.loggedIn) {
-          setUsername(res.data.username)
-          console.log(res)
-        } else {
-          navigate("/login")
-        }
-      })
-      .catch(err => console.log(err))
-  }, [])
-
   const logout = async (e) =>{
     e.preventDefault()
     try{
