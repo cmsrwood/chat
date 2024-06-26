@@ -34,7 +34,7 @@ const conn = mysql.createConnection(options)
 const sessionStore = new MySQLStore(options)
 app.use(session({
     key: 'session_user',
-    secret: 'secret',
+    secret: '123',
     resave: false,
     saveUninitialized: false,
     store: sessionStore,
