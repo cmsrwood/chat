@@ -20,6 +20,7 @@ const { BACKEND_PORT, DB_HOST, DB_USER, DB_PASS, DB_DATABASE, FRONTEND_URL, BACK
 // database
 const options = {
     host: DB_HOST,
+    port: 3306,
     user: DB_USER,
     password: DB_PASS,
     database: DB_DATABASE
