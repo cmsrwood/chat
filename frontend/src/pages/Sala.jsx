@@ -4,12 +4,9 @@ import io from 'socket.io-client'
 import Chat from './Chat'
 import axios from 'axios'
 import Swal from 'sweetalert2'
-import { BACKEND_URL, FRONTEND_URL } from "../config.js";
-
-
+const { BACKEND_URL, FRONTEND_URL } = require("../config.js");
 
 const socket = io.connect(BACKEND_URL)
-
 
 function Sala() {
   
@@ -18,6 +15,19 @@ function Sala() {
   const [username, setUsername] = useState("")
   const [room, setRoom] = useState("")
   const [showChat, setShowChat] = useState(false)
+
+  useEffect(() => {
+    axios.get(`${BACKEND_URL}/session`)
+      .then(res =>{
+        if (res.data.loggedIn) {
+          setUsername(res.data.username)
+          console.log(res)
+        } else {
+          console.log(res)
+        }
+      })
+      .catch(err => console.log(err))
+  }, [])
 
   const joinRoom = () => {
     if (username !== "" && room !== "") {
