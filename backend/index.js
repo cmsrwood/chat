@@ -14,6 +14,17 @@ const cookieParser = require('cookie-parser')
 // app
 const app = express()
 
+// middlewares
+app.use(cors({
+    credentials: true,
+    origin: [FRONTEND_URL], 
+    methods: ["GET", "POST", "PUT", "DELETE"]
+}))
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.use (cookieParser())
+app.use(bodyParser.json());
+
 // config
 const { BACKEND_PORT, DB_HOST, DB_USER, DB_PASS, DB_DATABASE, FRONTEND_URL, BACKEND_URL } = require("./config.js");
 
@@ -45,16 +56,7 @@ app.use(session({
     }
 }))
 
-// middlewares
-app.use(cors({
-    credentials: true,
-    origin: [FRONTEND_URL], 
-    methods: ["GET", "POST", "PUT", "DELETE"]
-}))
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-app.use (cookieParser())
-app.use(bodyParser.json());
+
 
 
 
