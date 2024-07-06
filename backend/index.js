@@ -17,16 +17,16 @@ const { BACKEND_PORT, DB_HOST, DB_USER, DB_PASS, DB_DATABASE, FRONTEND_URL, BACK
 const app = express()
 
 // middlewares
-app.use(cors({
-    credentials: true,
-    origin: [FRONTEND_URL], 
-    methods: ["GET", "POST", "PUT", "DELETE"]
-}))
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use (cookieParser())
 app.use(bodyParser.json());
+app.use(cors({
+    credentials: true,
+    origin: [FRONTEND_URL], 
+    methods: ["GET", "POST", "PUT", "DELETE"]
+}))
 
 // config
 
