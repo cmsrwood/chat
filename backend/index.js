@@ -167,6 +167,7 @@ const server = http.createServer(app)
 
 const io = new Server(server, {
     cors: {
+        credentials: true,
         origin: FRONTEND_URL,
         methods: ["GET", "POST"]
     }
