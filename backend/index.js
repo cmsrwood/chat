@@ -11,6 +11,8 @@ const http = require('http')
 const {Server} = require('socket.io')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
+const { BACKEND_PORT, DB_HOST, DB_USER, DB_PASS, DB_DATABASE, FRONTEND_URL, BACKEND_URL } = require("./config.js");
+
 // app
 const app = express()
 
@@ -26,7 +28,6 @@ app.use (cookieParser())
 app.use(bodyParser.json());
 
 // config
-const { BACKEND_PORT, DB_HOST, DB_USER, DB_PASS, DB_DATABASE, FRONTEND_URL, BACKEND_URL } = require("./config.js");
 
 // database
 const options = {
