@@ -167,7 +167,6 @@ const server = http.createServer(app)
 
 const io = new Server(server, {
     cors: {
-        credentials: true,
         origin: FRONTEND_URL,
         methods: ["GET", "POST"]
     }
@@ -180,12 +179,12 @@ io.on('connection', (socket) => {
     })
 
     socket.on("send_message", (data) => {
-        socket.to(data.room).emit("receive_message", data)
-      });
+        socket.to(data.room).emit("receive_message", data);
+    });
 })
 
-server.listen (BACKEND_PORT, () => {
-    console.log(`Server running on ${BACKEND_URL}:${BACKEND_PORT}`)
-})
+server.listen(BACKEND_PORT, () => {
+    console.log(`Server running on ${BACKEND_URL}:${BACKEND_PORT}`);
+});
 
 
