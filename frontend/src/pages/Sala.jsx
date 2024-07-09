@@ -23,9 +23,21 @@ function Sala() {
     }
   };
 
-  if (res.data.loggedIn) {
-    setUsername(res.data.username);
-  }
+  useEffect(() => {
+    axios.get(`${BACKEND_URL}/session`)
+      .then(res => {
+        if (res.data.loggedIn) {
+          setUsername(res.data.username);
+        } else {
+          console.log(res.data);
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        Swal.fire("Error!", "Something went wrong. Please try again later.", "error");
+      });
+  }, [navigate]);
+
   const logout = async (e) => {
     e.preventDefault();
     try {
