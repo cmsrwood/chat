@@ -8,6 +8,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const uniqid = require('uniquid');
 const { BACKEND_PORT, DB_HOST, DB_USER, DB_PASS, DB_DATABASE, FRONTEND_URL , BACKEND_URL } = require("./config.js");
 
 // app
@@ -49,7 +50,8 @@ app.use(session({
     cookie: {
         secure: false,
         httpOnly: false,
-        maxAge: 1000 * 60 * 60 * 24 * 7
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+        sameSite: 'none'
     }
 }));
 
@@ -119,9 +121,9 @@ app.post("/login", (req, res) => {
 
 app.get("/session", (req, res) => {
     if (req.session.username) {
-        res.json({ loggedIn: true, username: req.session.username });
+        res.send({ loggedIn: true, username: req.session.username });
     } else {
-        res.json({ loggedIn: false });
+        res.send({ loggedIn: false });
     }
 });
 
