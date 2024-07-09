@@ -5,7 +5,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { BACKEND_URL, FRONTEND_URL } from '../config';
 
-export default function Signin() {
+export default function Login() {
 
   axios.defaults.withCredentials = true
 
