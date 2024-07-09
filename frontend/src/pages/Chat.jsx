@@ -2,8 +2,11 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import ScrollToBottom from 'react-scroll-to-bottom'
+import axios from 'axios'
 // eslint-disable-next-line react/prop-types
 const Chat = ({ socket, username, room }) => {
+
+    axios.defaults.withCredentials = true
 
     const navigate = useNavigate()
     const [currentMessage, setCurrentMessage] = useState("")
