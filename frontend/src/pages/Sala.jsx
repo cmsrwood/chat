@@ -23,21 +23,9 @@ function Sala() {
     }
   };
 
-  useEffect(() => {
-    axios.get(`${BACKEND_URL}/session`)
-      .then(res => {
-        if (res.data.loggedIn) {
-          setUsername(res.data.username);
-        } else {
-          navigate("/login");
-        }
-      })
-      .catch(err => {
-        console.log(err);
-        Swal.fire("Error!", "Something went wrong. Please try again later.", "error");
-      });
-  }, [navigate]);
-
+  if (res.data.loggedIn) {
+    setUsername(res.data.username);
+  }
   const logout = async (e) => {
     e.preventDefault();
     try {
