@@ -123,7 +123,7 @@ app.get("/session", (req, res) => {
     if (req.session.username) {
         res.send({ loggedIn: true, username: req.session.username });
     } else {
-        res.send({ loggedIn: false });
+        res.send({ loggedIn: false, username : req.session.username });
     }
 });
 
