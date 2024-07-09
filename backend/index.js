@@ -3,15 +3,15 @@ const mysql = require('mysql')
 const session = require('express-session')
 const MySQLStore = require('express-mysql-session')(session)
 const multer = require('multer')
-const uniqid = require('uniquid')
+const uniqid = require('uniqid')
 const path = require('path')
 const cors = require('cors')
 const bcrypt = require('bcrypt');
 const http = require('http')
-const {Server} = require('socket.io')
+const { Server } = require('socket.io')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
-const { BACKEND_PORT, DB_HOST, DB_USER, DB_PASS, DB_DATABASE, FRONTEND_URL, BACKEND_URL } = require("./config.js");
+const { BACKEND_PORT, DB_HOST, DB_USER, DB_PASS, DB_DATABASE, FRONTEND_URL, BACKEND_URL, SESSION_SECRET } = require("./config.js");
 
 // app
 const app = express()
@@ -20,7 +20,7 @@ const app = express()
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use (cookieParser())
+app.use(cookieParser())
 app.use(bodyParser.json());
 app.use(cors({
     credentials: true,
@@ -39,7 +39,7 @@ const options = {
     database: DB_DATABASE
 }
 
-// conexion 
+// connection 
 
 const conn = mysql.createConnection(options)
 
@@ -47,20 +47,16 @@ const conn = mysql.createConnection(options)
 const sessionStore = new MySQLStore(options)
 app.use(session({
     key: 'session_user',
-    secret: '123',
+    secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-        secure: true, 
+        secure: process.env.NODE_ENV === 'production', 
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24 * 7
     }
 }))
-
-
-
-
 
 // multer
 const storage = multer.diskStorage({
@@ -68,96 +64,83 @@ const storage = multer.diskStorage({
         cb(null, 'uploads')
     },
     filename: (req, file, cb) => {
-        cb(null, file.fieldname + '-' + Date.now())
+        const ext = path.extname(file.originalname);
+        cb(null, file.fieldname + '-' + Date.now() + ext)
     }
 })
-
-// Generar una contraseña encriptada
-
-
 
 // routes
 
 app.post("/signup", (req, res) => {
-
-    conn.query("SELECT * FROM users WHERE email = ? OR username = ?", [req.body.email , req.body.username], (err, result) => {
-
-        const id = uniqid()
-
-
+    conn.query("SELECT * FROM users WHERE email = ? OR username = ?", [req.body.email, req.body.username], (err, result) => {
         if (err) {
-            res.send(err)
+            console.error(err)
+            return res.status(500).json({ error: 'Internal server error' })
         }
         if (result.length > 0) {
-            res.send("User already exists")
+            return res.status(409).json({ message: 'User already exists' })
         } else {
+            const id = uniqid()
             const password = req.body.password
             const hashpassword = bcrypt.hashSync(password, 10)
             const q = "INSERT INTO users (id_user, username, email, pass) VALUES (?,?,?,?)"
-            const values = [
-                id,
-                req.body.username,
-                req.body.email,
-                hashpassword
-            ]
+            const values = [id, req.body.username, req.body.email, hashpassword]
             conn.query(q, values, (err) => {
                 if (err) {
-                    res.send(err)
+                    console.error(err)
+                    return res.status(500).json({ error: 'Internal server error' })
                 }
-                res.send("User created successfully")
+                res.status(201).json({ message: 'User created successfully' })
             })
         }
     })
 })
 
-
 app.post("/login", (req, res) => {
-    console.log (req.sessionID)
     const username = req.body.username;
     const password = req.body.password;
-    
 
     conn.query("SELECT * FROM users WHERE username = ?", [username], (err, result) => {
         if (err) {
-            res.send(err);
-            return;
+            console.error(err);
+            return res.status(500).json({ error: 'Internal server error' });
         }
         if (result.length === 0) {
-            res.send("Usuario no encontrado");
-            return;
+            return res.status(404).json({ message: 'User not found' });
         }
         const user = result[0];
 
-        req.session.username = user.username;
-        console.log (req.session.username)
-        
         bcrypt.compare(password, user.pass, (err, isMatch) => {
             if (err) {
-                res.send(err);
-                return;
+                console.error(err);
+                return res.status(500).json({ error: 'Internal server error' });
             }
             if (!isMatch) {
-                res.send("Contraseña incorrecta");
-                return;
+                return res.status(401).json({ message: 'Incorrect password' });
             }
-            res.send("Success");
-            
-        });
 
+            req.session.username = user.username;
+            res.json({ message: 'Success' });
+        });
     });
 });
 
 app.get("/session", (req, res) => {
     if (req.session.username) {
-        res.json({loggedIn: true, username: req.session.username});
+        res.json({ loggedIn: true, username: req.session.username });
     } else {
-        res.json({loggedIn: false});
+        res.json({ loggedIn: false });
     }
 });
 
-app.get ("/logout", (req, res) => {
-    req.session.destroy();
-    res.send("Success");
+app.get("/logout", (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+        res.json({ message: 'Success' });
+    });
 });
 
 const upload = multer({ storage: storage })
@@ -174,7 +157,6 @@ const io = new Server(server, {
 })
 
 io.on('connection', (socket) => {
-
     socket.on('join_room', (data) => {
         socket.join(data)
     })
@@ -187,5 +169,3 @@ io.on('connection', (socket) => {
 server.listen(BACKEND_PORT, () => {
     console.log(`Server running on ${BACKEND_URL}:${BACKEND_PORT}`);
 });
-
-
