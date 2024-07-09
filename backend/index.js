@@ -47,12 +47,12 @@ const conn = mysql.createConnection(options)
 const sessionStore = new MySQLStore(options)
 app.use(session({
     key: 'session_user',
-    secret: '123456789',
+    secret: '123456',
     resave: false,
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-        secure: process.env.NODE_ENV === 'production', 
+        secure: true, 
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24 * 7
     }
