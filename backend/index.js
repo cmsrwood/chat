@@ -2,28 +2,26 @@ const express = require('express');
 const mysql = require('mysql');
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
-const multer = require('multer');
-const uniqid = require('uniqid');
-const path = require('path');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const http = require('http');
 const { Server } = require('socket.io');
+const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const { BACKEND_PORT, DB_HOST, DB_USER, DB_PASS, DB_DATABASE, FRONTEND_URL, BACKEND_URL } = require('./config.js');
+const { BACKEND_PORT, DB_HOST, DB_USER, DB_PASS, DB_DATABASE, FRONTEND_URL } = require("./config.js");
 
 // app
 const app = express();
 
 // middlewares
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(bodyParser.json());
 app.use(cors({
     credentials: true,
     origin: [FRONTEND_URL],
-    methods: ['GET', 'POST']
+    methods: ["GET", "POST"]
 }));
 
 // config
@@ -38,16 +36,7 @@ const options = {
 };
 
 // conexion 
-
 const conn = mysql.createConnection(options);
-
-conn.connect(err => {
-    if (err) {
-        console.error('Error connecting to the database:', err);
-        return;
-    }
-    console.log('Database connected!');
-});
 
 // session
 const sessionStore = new MySQLStore(options);
@@ -58,7 +47,7 @@ app.use(session({
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-        secure: false, // Cambiar a true en producción con HTTPS
+        secure: false,
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24 * 7
     }
@@ -66,18 +55,19 @@ app.use(session({
 
 // routes
 
-app.post('/signup', (req, res) => {
-    conn.query('SELECT * FROM users WHERE email = ? OR username = ?', [req.body.email, req.body.username], (err, result) => {
+app.post("/signup", (req, res) => {
+    conn.query("SELECT * FROM users WHERE email = ? OR username = ?", [req.body.email, req.body.username], (err, result) => {
+        const id = uniqid();
+
         if (err) {
-            return res.status(500).send('Error querying the database');
+            res.send(err);
         }
         if (result.length > 0) {
-            return res.status(400).send('User already exists');
+            res.send("User already exists");
         } else {
-            const id = uniqid();
             const password = req.body.password;
             const hashpassword = bcrypt.hashSync(password, 10);
-            const q = 'INSERT INTO users (id_user, username, email, pass) VALUES (?,?,?,?)';
+            const q = "INSERT INTO users (id_user, username, email, pass) VALUES (?,?,?,?)";
             const values = [
                 id,
                 req.body.username,
@@ -86,43 +76,48 @@ app.post('/signup', (req, res) => {
             ];
             conn.query(q, values, (err) => {
                 if (err) {
-                    return res.status(500).send('Error inserting user');
+                    res.send(err);
                 }
-                res.status(201).send('User created successfully');
+                res.send("User created successfully");
             });
         }
     });
 });
 
-app.post('/login', (req, res) => {
+app.post("/login", (req, res) => {
     console.log(req.sessionID);
     const username = req.body.username;
     const password = req.body.password;
 
-    conn.query('SELECT * FROM users WHERE username = ?', [username], (err, result) => {
+    conn.query("SELECT * FROM users WHERE username = ?", [username], (err, result) => {
         if (err) {
-            return res.status(500).send('Error querying the database');
+            res.send(err);
+            return;
         }
         if (result.length === 0) {
-            return res.status(404).send('User not found');
+            res.send("Usuario no encontrado");
+            return;
         }
         const user = result[0];
 
+        req.session.username = user.username;
+        console.log(req.session.username);
+
         bcrypt.compare(password, user.pass, (err, isMatch) => {
             if (err) {
-                return res.status(500).send('Error comparing passwords');
+                res.send(err);
+                return;
             }
             if (!isMatch) {
-                return res.status(401).send('Incorrect password');
+                res.send("Contraseña incorrecta");
+                return;
             }
-            req.session.username = user.username;
-            console.log(req.session.username);
-            res.send('Success');
+            res.send("Success");
         });
     });
 });
 
-app.get('/session', (req, res) => {
+app.get("/session", (req, res) => {
     if (req.session.username) {
         res.json({ loggedIn: true, username: req.session.username });
     } else {
@@ -130,9 +125,9 @@ app.get('/session', (req, res) => {
     }
 });
 
-app.get('/logout', (req, res) => {
+app.get("/logout", (req, res) => {
     req.session.destroy();
-    res.send('Success');
+    res.send("Success");
 });
 
 // chat
@@ -142,7 +137,7 @@ const io = new Server(server, {
     cors: {
         credentials: true,
         origin: FRONTEND_URL,
-        methods: ['GET', 'POST']
+        methods: ["GET", "POST"]
     }
 });
 
@@ -151,8 +146,8 @@ io.on('connection', (socket) => {
         socket.join(data);
     });
 
-    socket.on('send_message', (data) => {
-        socket.to(data.room).emit('receive_message', data);
+    socket.on("send_message", (data) => {
+        socket.to(data.room).emit("receive_message", data);
     });
 });
 
