@@ -75,10 +75,10 @@ app.post("/signup", (req, res) => {
     conn.query("SELECT * FROM users WHERE email = ? OR username = ?", [req.body.email, req.body.username], (err, result) => {
         if (err) {
             console.error(err)
-            return res.status(500).json({ error: 'Internal server error' })
+            return res.status(500).send({ error: 'Internal server error' })
         }
         if (result.length > 0) {
-            return res.status(409).json({ message: 'User already exists' })
+            return res.status(409).send("User already exists")
         } else {
             const id = uniqid()
             const password = req.body.password
@@ -88,9 +88,9 @@ app.post("/signup", (req, res) => {
             conn.query(q, values, (err) => {
                 if (err) {
                     console.error(err)
-                    return res.status(500).json({ error: 'Internal server error' })
+                    return res.status(500).send({ error: 'Internal server error' })
                 }
-                res.status(201).json({ message: 'User created successfully' })
+                res.status(201).send("User created successfully")
             })
         }
     })
@@ -103,33 +103,33 @@ app.post("/login", (req, res) => {
     conn.query("SELECT * FROM users WHERE username = ?", [username], (err, result) => {
         if (err) {
             console.error(err);
-            return res.status(500).json({ error: 'Internal server error' });
+            return res.status(500).send({ error: 'Internal server error' });
         }
         if (result.length === 0) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).send('User not found');
         }
         const user = result[0];
 
         bcrypt.compare(password, user.pass, (err, isMatch) => {
             if (err) {
                 console.error(err);
-                return res.status(500).json({ error: 'Internal server error' });
+                return res.status(500).send({ error: 'Internal server error' });
             }
             if (!isMatch) {
-                return res.status(401).json({ message: 'Incorrect password' });
+                return res.status(401).send("Contraseña incorrecta");
             }
 
             req.session.username = user.username;
-            res.json({ message: 'Success' });
+            res.send("Success");
         });
     });
 });
 
 app.get("/session", (req, res) => {
     if (req.session.username) {
-        res.json({ loggedIn: true, username: req.session.username });
+        res.send({ loggedIn: true, username: req.session.username });
     } else {
-        res.json({ loggedIn: false });
+        res.send({ loggedIn: false });
     }
 });
 
@@ -137,9 +137,9 @@ app.get("/logout", (req, res) => {
     req.session.destroy(err => {
         if (err) {
             console.error(err);
-            return res.status(500).json({ error: 'Internal server error' });
+            return res.status(500).send({ error: 'Internal server error' });
         }
-        res.json({ message: 'Success' });
+        res.send("Success");
     });
 });
 
@@ -167,5 +167,5 @@ io.on('connection', (socket) => {
 })
 
 server.listen(BACKEND_PORT, () => {
-    console.log(`Server running on ${BACKEND_URL}:${BACKEND_PORT}`);
+    console.log(`Backend server running on ${BACKEND_URL}`);
 });
